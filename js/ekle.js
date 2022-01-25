@@ -13,6 +13,14 @@ newLink.target = "_blank";
 // createTextNode ile html tagı içerisine text eklendi
 newLink.appendChild(document.createTextNode("Farklı Sayfaya Git"))
 
-// belirlenen card dom'unun sonuna oluşturduğumuz ve doldurduğumuz newLink değişkenini ekledik.
-card.appendChild(newLink)
+
+
+const control = document.getElementsByClassName("list-group-item")
+
+
+if(control[4] != undefined ){
+    // belirlenen card dom'unun sonuna oluşturduğumuz ve doldurduğumuz newLink değişkenini ekledik.
+    card.appendChild(newLink)
+}
+
 
