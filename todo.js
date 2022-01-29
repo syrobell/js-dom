@@ -4,15 +4,100 @@ const todoInput = document.querySelector("#todo");
 const todoList = document.querySelector(".list-group");
 const firstCardBody = document.querySelectorAll(".card-body")[0];
 const secondCardBody = document.querySelectorAll(".card-body")[1];
-const filter = document.querySelectorAll("#filter");
-const clearbutton = document.querySelectorAll("#clear-todos");
+const filter = document.querySelector("#filter");
+const clearbutton = document.querySelector("#clear-todos");
+const clearChosen = document.querySelector("#clear-chosen");
 
 eventListeners();
+
 
 function eventListeners(){// Tüm eventleri çağıran fonksiyon
     form.addEventListener("submit",addTodo);
     document.addEventListener("DOMContentLoaded", loadAllTodosToUI);
+    secondCardBody.addEventListener("click",deleteToDo);
+    filter.addEventListener("keyup", filterToDos);
+    clearbutton.addEventListener("click", clearAllTodos);
+    clearChosen.addEventListener("click", clearChosenTodos);
+    secondCardBody.addEventListener("click", choseForClear);
+}
+function choseForClear(e){
+    if(e.target.className === "list-group-item d-flex justify-content-between" ){
+        if(e.target.style === "background: " ){
+            e.target.setAttribute("style", "background: #999")
 
+        }
+        else{
+            e.target.removeAttribute("style", "background: #000")
+        }
+        
+    }
+
+
+    
+    
+
+}
+
+
+function clearChosenTodos(e){
+
+}
+
+function clearAllTodos(e){
+    if (confirm("Tümünü silmek istediğinize emin misiniz?")){
+        // Arayüzden Todoları Temizleme
+        // todoList.innerHTML = ""; // Yavaş Çalışır
+        while (todoList.firstElementChild != null){
+            todoList.removeChild(todoList.firstElementChild);
+        }
+        localStorage.removeItem("todos")
+    }
+}
+
+function filterToDos(e){
+    const text = e.target.value.toLowerCase();
+    const filters = document.querySelectorAll(".list-group-item");
+
+    filters.forEach(function(filter){
+        const filterText = filter.textContent.toLowerCase();
+        console.log(filterText)
+
+        if(filterText.indexOf(text) === -1){
+            filter.setAttribute("style", "display: none !important")
+            
+        }
+        else{
+            
+            filter.setAttribute("style", "display: block")
+            
+        };
+
+        
+    });
+    
+    
+}
+
+function deleteToDo(e){
+
+    if(e.target.className === "fa fa-remove"){
+        e.target.parentElement.parentElement.remove();
+        deleteToDoFromStorage(e.target.parentElement.parentElement.textContent);
+        showAlert("success", "Todo Başarıyla Silindi!")
+    }
+    
+}
+
+function deleteToDoFromStorage(deletetodo){
+    let todos = getTodoFromStorage();
+
+    todos.forEach(function(todo,index){
+        if (todo === deletetodo){ b
+            todos.splice(index,1);
+        }
+    });
+
+    localStorage.setItem("todos",JSON.stringify(todos));
 }
 
 function loadAllTodosToUI(){
@@ -36,7 +121,7 @@ function addTodo(e){
     addTodoUI(newTodo);
     showAlert("success", "Tebrikler Kayıt Oluşturuldu!")
     addTodoStorage(newTodo);
-    }
+    };
     e.preventDefault();
 }
 function addTodoUI(newTodo){
@@ -62,10 +147,11 @@ function addTodoUI(newTodo){
     todoList.appendChild(listItem);
 
     todoInput.value = "";
-    renklendir();
+    
+    
 }
 function renklendir(){
-    const liColor = document.querySelectorAll("li:nth-child(odd)")
+    const liColor = document.querySelectorAll("li:nth-child(odd)");
     liColor.forEach(function(e1){
         e1.style.background = "#ddd"; 
     });
@@ -73,9 +159,9 @@ function renklendir(){
 }
 function showAlert(type,message){
 
-    const makeAlert = document.createElement("div")
-    const closeAlert = document.createElement("button")
-    makeAlert.className = `alert alert-${type} alert-dismissible fade show mt-3`
+    const makeAlert = document.createElement("div");
+    const closeAlert = document.createElement("button");
+    makeAlert.className = `alert alert-${type} alert-dismissible fade show mt-3`;
     makeAlert.textContent = message;
     
 
@@ -83,7 +169,7 @@ function showAlert(type,message){
     closeAlert.className = "close";
     closeAlert.setAttribute("data-dismiss","alert");
     closeAlert.setAttribute("aria-label","Close");
-    closeAlert.innerHTML = "<span aria-hidden='true'>&times;</span>"
+    closeAlert.innerHTML = "<span aria-hidden='true'>&times;</span>";
 
     makeAlert.appendChild(closeAlert);
 
@@ -91,7 +177,7 @@ function showAlert(type,message){
 
     setTimeout(function(){
         makeAlert.remove();
-    },3500)
+    },3500);
     
 
 
@@ -107,7 +193,7 @@ function getTodoFromStorage(){
     }
     else{
         todos = JSON.parse(localStorage.getItem("todos"));
-    }
+    };
 
     return todos;
 }
