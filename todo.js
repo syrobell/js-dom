@@ -10,6 +10,10 @@ const clearChosen = document.querySelector("#clear-chosen");
 
 eventListeners();
 
+function insertAfter(newNode, existingNode) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+}
+
 
 function eventListeners(){// Tüm eventleri çağıran fonksiyon
     form.addEventListener("submit",addTodo);
@@ -21,26 +25,55 @@ function eventListeners(){// Tüm eventleri çağıran fonksiyon
     secondCardBody.addEventListener("click", choseForClear);
 }
 function choseForClear(e){
-    if(e.target.className === "list-group-item d-flex justify-content-between" ){
-        if(e.target.style === "background: " ){
-            e.target.setAttribute("style", "background: #999")
 
-        }
-        else{
-            e.target.removeAttribute("style", "background: #000")
-        }
+    const check = document.createElement("i")
+    check.className = "fas fa-check flex-shrink-1 mr-3 mt-1"
+    check.style = "color: #ff8000"
+    
+    
+    if(e.target.parentElement.className === "list-group-item d-flex bd-highlight"){
+        e.target.parentElement.className = "list-group-item d-flex bd-highlight checked"
+        e.target.parentElement.style = "background: #666"
+        insertAfter(check , e.target)
+        
         
     }
-
-
-    
-    
+    else if(e.target.parentElement.className === "list-group-item d-flex bd-highlight checked"){
+        e.target.parentElement.className = "list-group-item d-flex bd-highlight"
+        e.target.parentElement.style = "background: "
+        e.target.nextSibling.remove()
+        
+        
+    }
+    if(e.target.className === "list-group-item d-flex bd-highlight"){
+        e.target.className = "list-group-item d-flex bd-highlight checked"
+        e.target.style = "background: #666"
+        insertAfter(check , e.target.firstElementChild)
+        
+        
+    }
+    else if(e.target.className === "list-group-item d-flex bd-highlight checked"){
+        e.target.className = "list-group-item d-flex bd-highlight"
+        e.target.style = "background: "
+        e.target.firstElementChild.nextSibling.remove()
+        
+    }
+        
 
 }
 
 
-function clearChosenTodos(e){
+function clearChosenTodos(){
+    let chosens = document.querySelectorAll(".checked")
 
+    chosens.forEach(function(chosen){
+        chosen.remove();
+        deleteToDoFromStorage(chosen.textContent);
+        
+    })
+    showAlert("success", "Seçilen İçerikler Başarıyla Silindi!")
+    
+e.preventDefault();
 }
 
 function clearAllTodos(e){
@@ -79,20 +112,20 @@ function filterToDos(e){
 }
 
 function deleteToDo(e){
-
+    console.log(e.target.className)
     if(e.target.className === "fa fa-remove"){
         e.target.parentElement.parentElement.remove();
         deleteToDoFromStorage(e.target.parentElement.parentElement.textContent);
         showAlert("success", "Todo Başarıyla Silindi!")
     }
-    
+
 }
 
 function deleteToDoFromStorage(deletetodo){
     let todos = getTodoFromStorage();
 
     todos.forEach(function(todo,index){
-        if (todo === deletetodo){ b
+        if (todo === deletetodo){
             todos.splice(index,1);
         }
     });
@@ -128,17 +161,23 @@ function addTodoUI(newTodo){
 
     //Elementleri Oluşturma
     const listItem = document.createElement("li");
+    const divItem = document.createElement("div")
     const linkItem = document.createElement("a");
     // Li Class
-    listItem.className = ("list-group-item d-flex justify-content-between");
+    listItem.className = ("list-group-item d-flex bd-highlight");
+    
+    //span
+    divItem.className = ("w-100 bd-highlight")
     
     // A Class ve Özellikleri
     linkItem.href = ("#");
-    linkItem.className = ("delete-item");
+    linkItem.className = ("delete-item flex-shrink-1");
     linkItem.innerHTML = ("<i class = 'fa fa-remove'></i>");
 
     // Fonksiyona gelen değeri text olarak eklemek
-    listItem.appendChild(document.createTextNode(newTodo));
+    divItem.append(document.createTextNode(newTodo));
+
+    listItem.appendChild(divItem);
 
     // A elementini Li Elementinin içine eklemek
     listItem.appendChild(linkItem);
@@ -147,6 +186,7 @@ function addTodoUI(newTodo){
     todoList.appendChild(listItem);
 
     todoInput.value = "";
+    
     
     
 }
