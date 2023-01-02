@@ -21,6 +21,8 @@ function checkFunc() {
             message.textContent = "🔥 You Lose"
             score--;
             scoreText.textContent = score;
+
+
         }
 
     } else if (guessedNumber < secretNumber) {
@@ -32,6 +34,8 @@ function checkFunc() {
             message.textContent = "🔥 You Lose"
             score--;
             scoreText.textContent = score;
+
+
         }
 
     }
